@@ -1,1 +1,21 @@
-<p>Hello world Minahil</p>
+<head><link rel="stylesheet" href="index.css"></head>
+<h1>Minahil</h1>
+<p>Hej mit live er mærkeligt synes du også <b>ok</b></p>
+<form id="chatForm">
+    <input type="text" id="usernameInput" placeholder="Enter your name">
+    <input type="text" id="roomnameInput" placeholder="Enter room name">
+    <button type="submit">Send</button>
+</form>
+<img width="500" src="https://s.yimg.com/ny/api/res/1.2/gqWEplyMSJSsDZGYYQlIXQ--/YXBwaWQ9aGlnaGxhbmRlcjt3PTY0MDtoPTkwNw--/https://media.zenfs.com/en/geek_culture_285/63664a05790988786a20a6a9e2e5a737">
+<a href="./chat.html">chat sidde</a>
+<script>
+    document.getElementById('chatForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const usernameInput = document.getElementById('usernameInput');
+        const username = usernameInput.value;
+        const roomnameInput = document.getElementById('roomnameInput');
+        const roomname = roomnameInput.value;
+
+        window.location.href = `./chat.html?roomId=${roomname}&username=${username}`;
+    });
+</script>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Chat Room</title>
+    <style>
+        #chat {
+            overflow-y: scroll;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        .message {
+            margin: 5px;
+            padding: 10px;
+        }
+
+        .user-message {
+            color: rgb(17, 210, 0);
+            /* Text color for the current user's messages */
+        }
+
+        .other-user-message {
+            color: rgb(50, 50, 50);
+            /* Text color for other users' messages */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Chat Room</h1>
+    <ul id="roomList">
+        <!-- Chat room list will be displayed here -->
+    </ul>
+
+    <div id="chat">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <form id="chatForm">
+        <input type="text" id="usernameInput" placeholder="Enter your name">
+        <input type="text" id="roomnameInput" placeholder="Enter room name">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        document.getElementById('chatForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const usernameInput = document.getElementById('usernameInput');
+            const username = usernameInput.value;
+            const roomnameInput = document.getElementById('roomnameInput');
+            const roomname = roomnameInput.value;
+
+            window.location.href = `./chat.html?roomId=${roomname}&username=${username}`;
+        });
+    </script>
+</body>
+
+</html>

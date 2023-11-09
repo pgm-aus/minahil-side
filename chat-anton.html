@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chat Room</title>
+    <style>
+        #chat {
+            overflow-y: scroll;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column-reverse;
+        }
+        .message {
+            margin: 5px;
+            padding: 10px;
+        }
+        .user-message {
+            color: rgb(17, 210, 0); /* Text color for the current user's messages */
+        }
+        .other-user-message {
+            color: rgb(50, 50, 50); /* Text color for other users' messages */
+        }
+    </style>
+</head>
+<body>
+    <h1>Chat Room</h1>
+    <h3 id="usernameLabel"></h3>
+    <ul id="roomList">
+        <!-- Chat room list will be displayed here -->
+    </ul>
+
+    <div id="chat">
+        <!-- Chat messages will be displayed here -->
+    </div>
+    <form id="chatForm">
+        <input type="text" id="messageInput" placeholder="Enter your message">
+        <button type="submit">Send</button>
+    </form>
+
+    <script>
+        function formatTimestamp(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleString(); // You can adjust the format as needed
+        }
+
+        function fetchData(roomId, username) {
+            fetch(`http://localhost:3000/room/${roomId}`)
+                .then(response => response.json())
+                .then(data => {
+                    var chatElement = document.getElementById('chat');
+                    var chatHTML = '';
+
+                    data.reverse().forEach(item => {
+                        const formattedTimestamp = formatTimestamp(item.timestamp); // Format the timestamp
+                        const messageClass = item.sender === username ? 'user-message' : 'other-user-message';
+                        chatHTML += `<div class="message ${messageClass}"><strong>${item.sender} (${formattedTimestamp}):</strong> ${item.message}</div>`;
+                    });
+
+                    chatElement.innerHTML = chatHTML;
+                })
+                .catch(error => {
+                    console.error('Error fetching data: ' + error);
+                });
+        }
+
+        function sendMessage(roomId, message, username) {
+            fetch(`http://localhost:3000/room/${roomId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ message, user: username }),
+            })
+                .then(response => {
+                    if (response.ok) {
+                        fetchData(roomId, username);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error sending message: ' + error);
+                });
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value;
+            if (message) {
+                sendMessage(roomId, message, username);
+                messageInput.value = '';
+            }
+        });
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const roomId = urlParams.get('roomId');
+        const username = urlParams.get('username');
+
+        fetchData(roomId, username);
+
+        setInterval(function () {
+            fetchData(roomId, username);
+        }, 1000);
+    </script>
+
+<script>
+    function fetchRoomList() {
+        const username = urlParams.get('username');
+        var usernameLabel = document.getElementById('usernameLabel');
+        usernameLabel.innerText = `Username: ${username}`;
+
+        fetch('http://localhost:3000/rooms')
+            .then(response => response.json())
+            .then(data => {
+                var roomList = document.getElementById('roomList');
+
+                data.forEach(room => {
+                    // Create a list item for each chat room
+                    var listItem = document.createElement('li');
+                    listItem.innerHTML = `<a href="?roomId=${room.roomId}&username=${username}">${room.roomId}</a>`;
+                    roomList.appendChild(listItem);
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching chat rooms: ' + error);
+            });
+    }
+
+    // Fetch and display the list of chat rooms when the page loads
+    fetchRoomList();
+</script>
+</body>
+</html>
